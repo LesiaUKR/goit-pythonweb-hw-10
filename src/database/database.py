@@ -1,4 +1,4 @@
-# src/database/db.py
+
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from src.conf.config import settings
