@@ -1,9 +1,12 @@
 [tool.poetry]
-name = "goit-pythonweb-hw-08"
+name = "goit-pythonweb-hw-10"
 version = "0.1.0"
 description = "Contacts API"
 authors = ["Lesia Soloviova <solovyova.lesya@gmail.com>"]
 readme = "README.md"
+packages = [
+    { include = "src" },  # Вказує, що папка `src` належить до проекту
+]
 
 [tool.poetry.dependencies]
 python = "^3.12"
