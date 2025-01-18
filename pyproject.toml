@@ -25,6 +25,7 @@ cloudinary = "^1.30.0"
 passlib = "^1.7.4"
 fastapi-mail = "^1.2.0"
 python-multipart = "^0.0.6"
+libgravatar = "^1.0.4"
 
 [build-system]
 requires = ["poetry-core"]

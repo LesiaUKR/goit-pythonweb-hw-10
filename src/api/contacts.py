@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from typing import List
-from datetime import date
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.schemas import ContactModel, ContactResponse

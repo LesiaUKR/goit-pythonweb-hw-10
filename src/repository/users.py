@@ -1,7 +1,10 @@
+import logging
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from src.database.models import User
 from src.schemas import UserCreate
+
+logger = logging.getLogger("rate_limiter")
 
 class UserRepository:
     def __init__(self, db: AsyncSession):
@@ -31,21 +34,30 @@ class UserRepository:
         result = await self.db.execute(stmt)
         return result.scalar_one_or_none()
 
-    async def create_user(self, user: UserCreate, avatar_url: str = None) -> User:
+    async def create_user(self, user: UserCreate,
+                          avatar_url: str = None) -> User:
         """
         Створює нового користувача.
         """
-        db_user = User(
-            username=user.username,
-            email=user.email,
-            hashed_password=user.password,  # Пароль має бути хешований перед передачею
-            avatar_url=avatar_url,  # Додаємо аватар, якщо він є
-            is_verified=False,  # За замовчуванням користувач не підтверджений
-        )
-        self.db.add(db_user)
-        await self.db.commit()
-        await self.db.refresh(db_user)
-        return db_user
+        logger.info("Attempting to create user: %s", user.dict())
+        try:
+            db_user = User(
+                **user.model_dump(exclude_unset=True, exclude={"password"}),
+                hashed_password=user.password,
+                # Пароль має бути хешований перед передачею
+                avatar_url=avatar_url,  # Додаємо аватар, якщо він є
+                is_verified=False,
+                # За замовчуванням користувач не підтверджений
+            )
+            self.db.add(db_user)
+            await self.db.commit()
+            logger.info("User successfully added to database")
+            await self.db.refresh(db_user)  # Оновлюємо всі атрибути
+            return db_user
+        except Exception as e:
+            logger.error("Error creating user in repository: %s", str(e))
+            await self.db.rollback()
+            raise
 
     async def confirmed_email(self, email: str) -> None:
         """

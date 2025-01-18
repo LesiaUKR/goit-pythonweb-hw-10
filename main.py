@@ -5,12 +5,16 @@ from starlette.responses import JSONResponse
 from slowapi.errors import RateLimitExceeded
 from alembic import command
 from alembic.config import Config
-import asyncio
+
+
+logging.basicConfig()
+logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)\
+# Ініціалізація логера
+logger = logging.getLogger("rate_limiter")
 
 # Імпортуємо маршрути
 from src.api import contacts, utils, users, auth
 
-logger = logging.getLogger("rate_limiter")
 
 app = FastAPI()
 

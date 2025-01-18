@@ -16,10 +16,11 @@ class Contact(Base):
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
     info = Column(String(500), nullable=True)
-    # Додаємо зовнішній ключ для зв'язку з таблицею users
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    # Встановлюємо зв'язок з моделлю User
-    user = relationship("User", back_populates="contacts")
+    user_id = Column(
+        "user_id", ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    user = relationship("User", backref="contacts",  lazy="joined")
+
 
 class User(Base):
     __tablename__ = "users"
@@ -27,9 +28,8 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     username = Column(String(50), unique=True, nullable=False)
     email = Column(String(100), unique=True, nullable=False)
-    hashed_password = Column(String(255), nullable=False)
+    hashed_password = Column(String, nullable=False)
     created_at = Column(DateTime, default=func.now())
     is_verified = Column(Boolean, default=False)
-    avatar_url = Column(String(255), nullable=True)
-    # Встановлюємо зв'язок з моделлю Contact
-    contacts = relationship("Contact", back_populates="user")
+    avatar_url = Column(String, nullable=True)
+    contacts = relationship("Contact", backref="user",  lazy="joined")

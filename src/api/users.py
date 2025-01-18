@@ -33,6 +33,6 @@ async def update_avatar_user(
     ).upload_file(file, user.username)
 
     user_service = UserService(db)
-    user = await user_service.update_avatar_url(user.email, avatar_url)
+    user = await user_service.update_avatar(user.email, avatar_url)
 
     return user
